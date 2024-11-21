@@ -1,2 +1,10 @@
 client/node_modules/
 client/dist/
+
+
+# Git Ignore Backend ----------------------
+./backend/node_modules
+./backend/package-lock.json
+
+# OS
+.DS_Store

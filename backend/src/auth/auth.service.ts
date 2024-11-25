@@ -5,8 +5,6 @@ import { SignInDto, SignUpDto } from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { use } from 'passport';
-import { access } from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -92,7 +90,7 @@ export class AuthService {
     const secret = this.config.get('JWT_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '15m',
+      expiresIn: '365d',
       secret: secret,
     });
 

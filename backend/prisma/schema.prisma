@@ -15,15 +15,15 @@ model customer_vehicles {
   is_deleted          Boolean?              @default(false)
   updated_at          DateTime?             @default(now()) @db.Timestamp(6)
   created_at          DateTime?             @default(now()) @db.Timestamp(6)
-  customers           customers?            @relation(fields: [customer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  vehicles            vehicles?             @relation(fields: [vehicle_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  customer           customers?            @relation(fields: [customer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  vehicle            vehicles?             @relation(fields: [vehicle_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   detail_transactions detail_transactions[]
 }
 
 model customers {
   id                Int                 @id @default(autoincrement())
   name              String?             @db.VarChar(255)
-  phone_number      BigInt?
+  phone_number      Int?
   is_deleted        Boolean?            @default(false)
   updated_at        DateTime?           @default(now()) @db.Timestamp(6)
   created_at        DateTime?           @default(now()) @db.Timestamp(6)
@@ -32,36 +32,37 @@ model customers {
 }
 
 model detail_transactions {
-  id                  Int                @id @default(autoincrement())
-  transaction_id      Int?
-  product_id          Int?
-  customer_vehicle_id Int?
-  quantity            Int?
-  total_price         Int?
-  employee_id         Int?
-  is_deleted          Boolean?           @default(false)
-  updated_at          DateTime?          @default(now()) @db.Timestamp(6)
-  created_at          DateTime?          @default(now()) @db.Timestamp(6)
-  customer_vehicles   customer_vehicles? @relation(fields: [customer_vehicle_id], references: [id], onUpdate: NoAction)
-  employees           employees?         @relation(fields: [employee_id], references: [id], onUpdate: NoAction)
-  products            products?          @relation(fields: [product_id], references: [id], onUpdate: NoAction)
-  transactions        transactions?      @relation(fields: [transaction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                   Int                @id @default(autoincrement())
+  transaction_id       Int?
+  product_id           Int?
+  customer_vehicle_id  Int?
+  quantity             Int?
+  total_price          Int?
+  employee_id          Int?
+  is_deleted           Boolean?           @default(false)
+  updated_at           DateTime?          @default(now()) @db.Timestamp(6)
+  created_at           DateTime?          @default(now()) @db.Timestamp(6)
+  employees_array_text String?            @db.VarChar(255)
+  customer_vehicle    customer_vehicles? @relation(fields: [customer_vehicle_id], references: [id], onUpdate: NoAction)
+  employee            employees?         @relation(fields: [employee_id], references: [id], onUpdate: NoAction)
+  product             products?          @relation(fields: [product_id], references: [id], onUpdate: NoAction)
+  transaction         transactions?      @relation(fields: [transaction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model employees {
   id                  Int                   @id @default(autoincrement())
   name                String?               @db.VarChar(255)
-  phone_number        BigInt?
+  phone_number        Int?
   is_deleted          Boolean?              @default(false)
   updated_at          DateTime?             @default(now()) @db.Timestamp(6)
   created_at          DateTime?             @default(now()) @db.Timestamp(6)
   detail_transactions detail_transactions[]
 }
 
-model payment_method {
-  id                Int            @id @default(autoincrement())
+model payment_methods {
+  id                Int            @id(map: "payment_method_pkey") @default(autoincrement())
   name              String?        @db.VarChar(255)
-  account_number    BigInt?
+  account_number    Int?
   an_account_number String?        @db.VarChar(255)
   is_deleted        Boolean?       @default(false)
   updated_at        DateTime?      @default(now()) @db.Timestamp(6)
@@ -76,6 +77,7 @@ model products {
   price               Int?
   type                String?               @db.VarChar(255)
   stock               Int?
+  image_url           String?
   is_deleted          Boolean?              @default(false)
   updated_at          DateTime?             @default(now()) @db.Timestamp(6)
   created_at          DateTime?             @default(now()) @db.Timestamp(6)
@@ -94,8 +96,8 @@ model transactions {
   updated_at          DateTime?             @default(now()) @db.Timestamp(6)
   created_at          DateTime?             @default(now()) @db.Timestamp(6)
   detail_transactions detail_transactions[]
-  customers           customers?            @relation(fields: [customer_id], references: [id], onUpdate: NoAction)
-  payment_method      payment_method?       @relation(fields: [payment_method_id], references: [id], onUpdate: NoAction)
+  customer           customers?            @relation(fields: [customer_id], references: [id], onUpdate: NoAction)
+  payment_method      payment_methods?      @relation(fields: [payment_method_id], references: [id], onUpdate: NoAction)
 }
 
 model users {

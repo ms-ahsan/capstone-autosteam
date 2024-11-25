@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model customer_vehicles {
+  id                  Int                   @id @default(autoincrement())
+  customer_id         Int?
+  vehicle_id          Int?
+  is_deleted          Boolean?              @default(false)
+  updated_at          DateTime?             @default(now()) @db.Timestamp(6)
+  created_at          DateTime?             @default(now()) @db.Timestamp(6)
+  customers           customers?            @relation(fields: [customer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  vehicles            vehicles?             @relation(fields: [vehicle_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  detail_transactions detail_transactions[]
+}
+
+model customers {
+  id                Int                 @id @default(autoincrement())
+  name              String?             @db.VarChar(255)
+  phone_number      BigInt?
+  is_deleted        Boolean?            @default(false)
+  updated_at        DateTime?           @default(now()) @db.Timestamp(6)
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  customer_vehicles customer_vehicles[]
+  transactions      transactions[]
+}
+
+model detail_transactions {
+  id                  Int                @id @default(autoincrement())
+  transaction_id      Int?
+  product_id          Int?
+  customer_vehicle_id Int?
+  quantity            Int?
+  total_price         Int?
+  employee_id         Int?
+  is_deleted          Boolean?           @default(false)
+  updated_at          DateTime?          @default(now()) @db.Timestamp(6)
+  created_at          DateTime?          @default(now()) @db.Timestamp(6)
+  customer_vehicles   customer_vehicles? @relation(fields: [customer_vehicle_id], references: [id], onUpdate: NoAction)
+  employees           employees?         @relation(fields: [employee_id], references: [id], onUpdate: NoAction)
+  products            products?          @relation(fields: [product_id], references: [id], onUpdate: NoAction)
+  transactions        transactions?      @relation(fields: [transaction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model employees {
+  id                  Int                   @id @default(autoincrement())
+  name                String?               @db.VarChar(255)
+  phone_number        BigInt?
+  is_deleted          Boolean?              @default(false)
+  updated_at          DateTime?             @default(now()) @db.Timestamp(6)
+  created_at          DateTime?             @default(now()) @db.Timestamp(6)
+  detail_transactions detail_transactions[]
+}
+
+model payment_method {
+  id                Int            @id @default(autoincrement())
+  name              String?        @db.VarChar(255)
+  account_number    BigInt?
+  an_account_number String?        @db.VarChar(255)
+  is_deleted        Boolean?       @default(false)
+  updated_at        DateTime?      @default(now()) @db.Timestamp(6)
+  created_at        DateTime?      @default(now()) @db.Timestamp(6)
+  transactions      transactions[]
+}
+
+model products {
+  id                  Int                   @id @default(autoincrement())
+  code                String?               @db.VarChar(255)
+  name                String?               @db.VarChar(255)
+  price               Int?
+  type                String?               @db.VarChar(255)
+  stock               Int?
+  is_deleted          Boolean?              @default(false)
+  updated_at          DateTime?             @default(now()) @db.Timestamp(6)
+  created_at          DateTime?             @default(now()) @db.Timestamp(6)
+  detail_transactions detail_transactions[]
+}
+
+model transactions {
+  id                  Int                   @id @default(autoincrement())
+  code_transaction    String?               @db.VarChar(255)
+  customer_id         Int?
+  grand_total         Int?
+  payment_method_id   Int?
+  total_payment       Int?
+  money_changes       Int?
+  is_deleted          Boolean?              @default(false)
+  updated_at          DateTime?             @default(now()) @db.Timestamp(6)
+  created_at          DateTime?             @default(now()) @db.Timestamp(6)
+  detail_transactions detail_transactions[]
+  customers           customers?            @relation(fields: [customer_id], references: [id], onUpdate: NoAction)
+  payment_method      payment_method?       @relation(fields: [payment_method_id], references: [id], onUpdate: NoAction)
+}
+
+model users {
+  id            Int       @id @default(autoincrement())
+  name_business String?   @db.VarChar(255)
+  email         String?   @unique @db.VarChar(255)
+  phone_number  Int?
+  address       String?
+  password      String?   @db.VarChar(255)
+  is_deleted    Boolean?  @default(false)
+  updated_at    DateTime? @default(now()) @db.Timestamp(6)
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model vehicles {
+  id                Int                 @id @default(autoincrement())
+  name              String?             @db.VarChar(255)
+  type              String?             @db.VarChar(255)
+  plate_number      String?             @db.VarChar(50)
+  is_deleted        Boolean?            @default(false)
+  updated_at        DateTime?           @default(now()) @db.Timestamp(6)
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  customer_vehicles customer_vehicles[]
+}

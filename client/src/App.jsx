@@ -9,6 +9,8 @@ import Home from './pages/home';
 import Transaksi from './pages/transaksi';
 import AddTransaksi from './pages/add-transksi';
 import Keranjang from './pages/keranjang';
+import Checkout from './pages/checkout';
+import CheckoutTransaksi from './pages/checkout-transaksi';
 
 function App() {
   const browserHistory = history.createBrowserHistory();
@@ -23,6 +25,11 @@ function App() {
         <Route path='transaksi' element={<Transaksi />} />
         <Route path='tambah-transaksi' element={<AddTransaksi />} />
         <Route path='keranjang' element={<Keranjang />} />
+        <Route path='checkout' element={<Checkout />} />
+        <Route
+          path='checkout-transaksi'
+          element={<CheckoutTransaksi />}
+        />
         {/* <Layouts>
         </Layouts> */}
       </Routes>

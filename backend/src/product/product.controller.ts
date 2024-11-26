@@ -15,12 +15,13 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ResponseDto } from '../helper/response.dto';
 
-import { UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage, File } from 'multer';
 import { extname } from 'path';
-import { JwtGuard } from 'src/auth/guard';
+import { JwtGuard } from '../auth/guard';
 export const runtime = 'edge';
+import * as multer from 'multer';
 
 @Controller('products')
 export class ProductController {
@@ -30,21 +31,10 @@ export class ProductController {
   @Post()
   @UseInterceptors(
     FileInterceptor('image_file', {
-      storage: diskStorage({
-        destination: './uploads', // Folder tempat file akan disimpan
-        filename: (req, file, callback) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname); // Ambil ekstensi file
-          callback(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-        },
-      }),
+      storage: multer.memoryStorage(),
       fileFilter: (req, file, callback) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|pdf|docx)$/)) {
-          return callback(
-            new Error('Only image, PDF, or DOCX files are allowed!'),
-            false,
-          );
+        if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+          return callback(new Error('Only image files are allowed!'), false);
         }
         callback(null, true);
       },
@@ -115,21 +105,10 @@ export class ProductController {
   @Patch(':id')
   @UseInterceptors(
     FileInterceptor('image_file', {
-      storage: diskStorage({
-        destination: './uploads', // Folder tempat file akan disimpan
-        filename: (req, file, callback) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname); // Ambil ekstensi file
-          callback(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-        },
-      }),
+      storage: multer.memoryStorage(),
       fileFilter: (req, file, callback) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|pdf|docx)$/)) {
-          return callback(
-            new Error('Only image, PDF, or DOCX files are allowed!'),
-            false,
-          );
+        if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+          return callback(new Error('Only image files are allowed!'), false);
         }
         callback(null, true);
       },

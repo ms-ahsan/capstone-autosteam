@@ -14,7 +14,7 @@ import { CustomerVehicleService } from './customer_vehicle.service';
 import { CreateCustomerVehicleDto } from './dto/create-customer_vehicle.dto';
 import { UpdateCustomerVehicleDto } from './dto/update-customer_vehicle.dto';
 import { ResponseDto } from 'src/helper/response.dto';
-import { JwtGuard } from 'src/auth/guard';
+import { JwtGuard } from '../auth/guard';
 
 @Controller('customer-vehicles')
 export class CustomerVehicleController {

@@ -4,7 +4,6 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { put, head, del } from '@vercel/blob';
 export const runtime = 'edge';
-import * as fs from 'fs';
 
 @Injectable()
 export class ProductService {
@@ -13,7 +12,7 @@ export class ProductService {
     try {
       // Process the uploaded file ----------------------------
       // Membaca file dari sistem file lokal
-      const fileBuffer = fs.readFileSync(createProductDto.image_file.path);
+      const fileBuffer = createProductDto.image_file.buffer;
 
       // Konversi ke File
       const vercelFile = new File(
@@ -28,9 +27,6 @@ export class ProductService {
       const result = await put(`/products/${vercelFile.name}`, vercelFile, {
         access: 'public',
       });
-
-      // Hapus file sementara setelah diunggah
-      fs.unlinkSync(createProductDto.image_file.path);
 
       createProductDto.code = `PRD-${Date.now()}`;
       const product = await this.prisma.products.create({
@@ -92,8 +88,6 @@ export class ProductService {
 
       // Check if the product exists
       if (product == null) {
-        // Hapus file
-        fs.unlinkSync(updateProductDto.image_file.path);
         throw new Error('Product not found');
       }
 
@@ -113,7 +107,7 @@ export class ProductService {
 
         // Upload image again to vercel blob
         // Membaca file dari sistem file lokal
-        const fileBuffer = fs.readFileSync(updateProductDto.image_file.path);
+        const fileBuffer = updateProductDto.image_file.buffer;
         // Konversi ke File
         const vercelFile = new File(
           [fileBuffer],
@@ -127,9 +121,6 @@ export class ProductService {
         const result = await put(`/products/${vercelFile.name}`, vercelFile, {
           access: 'public',
         });
-
-        // Hapus file sementara setelah diunggah
-        fs.unlinkSync(updateProductDto.image_file.path);
 
         const productUpdated = await this.prisma.products.update({
           where: {
